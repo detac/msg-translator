@@ -1,6 +1,7 @@
 package com.msg.translator.model;
 
 public class PmkFormula {
+	
     private String objectId;
     private String domainId;
     private String formulaTextWork;
@@ -37,5 +38,4 @@ public class PmkFormula {
     public void setFormulaTextWork(String formulaTextWork) {
         this.formulaTextWork = formulaTextWork;
     }
-    //TODO: Popuni sa ostalim poljima iz tabele, mada za ovaj zadatak to nije bitno
 }

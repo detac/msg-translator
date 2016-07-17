@@ -1,6 +1,7 @@
 package com.msg.translator.model;
 
 public enum EntryType {
+
 	PATHS, EXTERNAL_OBJECTS, OBJECT_ATTRIBUTES, METHODS, LOCAL_OBJECTS, LOCAL_VARIABLES, GLOBAL_VARIABLES;
 
 	public static EntryType getEntryType(int index) {

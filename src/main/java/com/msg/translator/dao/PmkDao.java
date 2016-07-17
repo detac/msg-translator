@@ -1,32 +1,61 @@
 package com.msg.translator.dao;
 
-import com.msg.translator.model.PmkFormula;
-import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.msg.translator.model.PmkFormula;
+
 public class PmkDao {
-    private static final String DB_LINK = "jdbc link do baze";
-    private static final String LIST_ALL_SQL = "SELECT ...";//TODO: selekt, koji dohvata sve iz baze..
-    private static final String STORE_SQL = "SELECT ...";//TODO: update ili insert, mozda najbolje da pitas onoga ko ti je poslao zadatak.
-    
-    private Connection getDB() {
-        //TODO: napravi konekciju ka bazi, i vrati je u return-u;
-        return null;
-    }
-    
-    public List<PmkFormula> getAll() {
-        List<PmkFormula> result = new ArrayList<>();
-        //TODO:
-        //Uzmes konekciju, vratis result set;
-        //iteriras kroz rezult set, i za svaki red u result pravi novi objekat PmkFormula;
-        //popunjavas potrebna polja, i dodajes u kolekciju;
-        return result;
-    }
-    
-    public int store(PmkFormula formula) {
-        //uzmes konekciju
-        //napravis prepared statement, odradis update/insert(sta vec treba).
-        return 0;//todo vratis broj insertovanih, ili update-ovanih redova;
-    }
+
+	private static final String LIST_ALL_SQL = "SELECT OBJECTID, DOMAINID, FORMULATEXTWORK FROM PMKFORMULA";
+	private static final String STORE_SQL = "UPDATE PMKFORMULA SET FORMULATEXTWORK = ? WHERE OBJECTID = ? AND DOMAINID = ?"; // poslao
+																																// zadatak.
+
+	private DatabaseConnection databaseConnection;
+
+	public PmkDao(DatabaseConnection databaseConnection) {
+		this.databaseConnection = databaseConnection;
+	}
+
+	@SuppressWarnings("unused")
+	private PmkDao() {
+	}
+
+	public List<PmkFormula> getAll() {
+		List<PmkFormula> result = new ArrayList<>();
+
+		try (Statement statement = databaseConnection.getConnection().createStatement()) {
+
+			ResultSet rs = statement.executeQuery(LIST_ALL_SQL);
+			while (rs.next()) {
+				PmkFormula pmkFormula = new PmkFormula();
+				pmkFormula.setObjectId(rs.getString(1));
+				pmkFormula.setDomainId(rs.getString(2));
+				pmkFormula.setFormulaTextWork(rs.getString(3));
+				result.add(pmkFormula);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("PmkDao.getAll(): " + e);
+		}
+
+		return result;
+	}
+
+	public int store(PmkFormula formula) {
+		try {
+			PreparedStatement ps = databaseConnection.getConnection().prepareStatement(STORE_SQL);
+			ps.setString(1, formula.getFormulaTextWork());
+			ps.setString(2, formula.getObjectId());
+			ps.setString(3, formula.getDomainId());
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("PmkDao.store(): " + e);
+		}
+		return -1;
+	}
 }

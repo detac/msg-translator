@@ -1,6 +1,7 @@
 package com.msg.translator.service;
 
 public class TranslateService {
+	
     private GlossaryService glossary;
 
     public TranslateService() {

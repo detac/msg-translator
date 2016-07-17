@@ -36,7 +36,6 @@ public class GlossaryDao {
 					result.add(ge);
 				}
 			}
-
 		} catch (Exception ex) {
 			System.out.println("GlossaryDao : " + ex);
 		}

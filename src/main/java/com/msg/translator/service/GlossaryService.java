@@ -4,6 +4,7 @@ import com.msg.translator.dao.GlossaryDao;
 import com.msg.translator.model.EntryType;
 
 public class GlossaryService {
+	
     private GlossaryDao dao;
             
     public GlossaryService() {
