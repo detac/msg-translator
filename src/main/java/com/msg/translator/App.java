@@ -8,17 +8,17 @@ import com.msg.translator.service.TranslateService;
 
 public class App {
 
-	public static void main(String[] args) {
-		DatabaseConnection databaseConnection = new DatabaseConnectionSQLite();
+  public static void main(String[] args) {
+    DatabaseConnection databaseConnection = new DatabaseConnectionSQLite();
 
-		if (databaseConnection.isConnected()) {
-			PmkDao pmkDao = new PmkDao(databaseConnection);
-			TranslateService translateService = new TranslateService();
+    if (databaseConnection.isConnected()) {
+      PmkDao pmkDao = new PmkDao(databaseConnection);
+      TranslateService translateService = new TranslateService();
 
-			PmkService pmkService = new PmkService(pmkDao, translateService);
-			pmkService.translate();
-			
-			databaseConnection.close();
-		}
-	}
+      PmkService pmkService = new PmkService(pmkDao, translateService);
+      pmkService.translate();
+
+      databaseConnection.close();
+    }
+  }
 }

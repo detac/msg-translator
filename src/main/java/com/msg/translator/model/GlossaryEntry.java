@@ -2,35 +2,37 @@ package com.msg.translator.model;
 
 public class GlossaryEntry {
 
-	private EntryType type;
-	private String orginal;
-	private String translated;
+  private EntryType type;
 
-	public GlossaryEntry() {
-	}
+  private String orginal;
 
-	public EntryType getType() {
-		return type;
-	}
+  private String translated;
 
-	public void setType(EntryType type) {
-		this.type = type;
-	}
+  public GlossaryEntry() {
+  }
 
-	public String getOriginal() {
-		return orginal;
-	}
+  public EntryType getType() {
+    return type;
+  }
 
-	public void setOriginal(String original) {
-		this.orginal = original;
-	}
+  public void setType(EntryType type) {
+    this.type = type;
+  }
 
-	public String getTranslated() {
-		return translated;
-	}
+  public String getOriginal() {
+    return orginal;
+  }
 
-	public void setTranslated(String translated) {
-		this.translated = translated;
-	}
+  public void setOriginal(String original) {
+    this.orginal = original;
+  }
+
+  public String getTranslated() {
+    return translated;
+  }
+
+  public void setTranslated(String translated) {
+    this.translated = translated;
+  }
 
 }

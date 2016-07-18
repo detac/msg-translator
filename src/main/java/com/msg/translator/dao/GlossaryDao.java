@@ -14,33 +14,41 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class GlossaryDao {
 
-	public List<GlossaryEntry> loadGlossary() {
-		List<GlossaryEntry> result = new ArrayList<>();
+  public List<GlossaryEntry> loadGlossary() {
+    List<GlossaryEntry> result = new ArrayList<>();
 
-		File file = new File("/home/visual/dev/projects/eclipse/goca/translator/src/main/resources/Translation-Glossary.xlsx");
-		try (FileInputStream fis = new FileInputStream(file); XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
-			for (int sheetIndex = 0; sheetIndex <= 6; sheetIndex++) {
-				XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
-				for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+    File file = new File(
+        "C:\\developer\\projects\\eclipse-neon\\msg-translator\\src\\main\\resources\\Translation-Glossary.xlsx");
 
-					Row row = sheet.getRow(rowIndex);
-					if (row == null) {
-						break;
-					}
+    try (FileInputStream fis = new FileInputStream(file); XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+      for (int sheetIndex = 0; sheetIndex <= 7; sheetIndex++) {
+        XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
 
-					GlossaryEntry ge = new GlossaryEntry();
-					ge.setType(EntryType.getEntryType(sheetIndex));
-					ge.setOriginal(row.getCell(0).getStringCellValue());
-					ge.setTranslated(row.getCell(1).getStringCellValue());
+          Row row = sheet.getRow(rowIndex);
+          if (row == null) {
+            break;
+          }
 
-					result.add(ge);
-				}
-			}
-		} catch (Exception ex) {
-			System.out.println("GlossaryDao : " + ex);
-		}
+          if (row.getCell(0) == null || row.getCell(1) == null) {
+            break;
+          }
 
-		return result;
-	}
+          //System.out.println(sheetIndex + "." + rowIndex);
+
+          GlossaryEntry ge = new GlossaryEntry();
+          ge.setType(EntryType.getEntryType(sheetIndex));
+          ge.setOriginal(row.getCell(0).getStringCellValue());
+          ge.setTranslated(row.getCell(1).getStringCellValue());
+
+          result.add(ge);
+        }
+      }
+    } catch (Exception ex) {
+      System.out.println("GlossaryDao : " + ex);
+    }
+
+    return result;
+  }
 
 }

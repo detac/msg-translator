@@ -1,41 +1,43 @@
 package com.msg.translator.model;
 
 public class PmkFormula {
-	
-    private String objectId;
-    private String domainId;
-    private String formulaTextWork;
 
-    public PmkFormula() {
-    }
+  private String objectId;
 
-    public PmkFormula(String objectId, String domainId, String formulaTextWork) {
-        this.objectId = objectId;
-        this.domainId = domainId;
-        this.formulaTextWork = formulaTextWork;
-    }
+  private String domainId;
 
-    public String getObjectId() {
-        return objectId;
-    }
+  private String formulaTextWork;
 
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
-    }
+  public PmkFormula() {
+  }
 
-    public String getDomainId() {
-        return domainId;
-    }
+  public PmkFormula(String objectId, String domainId, String formulaTextWork) {
+    this.objectId = objectId;
+    this.domainId = domainId;
+    this.formulaTextWork = formulaTextWork;
+  }
 
-    public void setDomainId(String domainId) {
-        this.domainId = domainId;
-    }
+  public String getObjectId() {
+    return objectId;
+  }
 
-    public String getFormulaTextWork() {
-        return formulaTextWork;
-    }
+  public void setObjectId(String objectId) {
+    this.objectId = objectId;
+  }
 
-    public void setFormulaTextWork(String formulaTextWork) {
-        this.formulaTextWork = formulaTextWork;
-    }
+  public String getDomainId() {
+    return domainId;
+  }
+
+  public void setDomainId(String domainId) {
+    this.domainId = domainId;
+  }
+
+  public String getFormulaTextWork() {
+    return formulaTextWork;
+  }
+
+  public void setFormulaTextWork(String formulaTextWork) {
+    this.formulaTextWork = formulaTextWork;
+  }
 }
