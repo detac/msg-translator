@@ -21,7 +21,7 @@ public class GlossaryDao {
         "C:\\developer\\projects\\eclipse-neon\\msg-translator\\src\\main\\resources\\Translation-Glossary.xlsx");
 
     try (FileInputStream fis = new FileInputStream(file); XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
-      for (int sheetIndex = 0; sheetIndex <= 7; sheetIndex++) {
+      for (int sheetIndex = 0; sheetIndex <= 5; sheetIndex++) {
         XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
         for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
 

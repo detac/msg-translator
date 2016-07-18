@@ -2,7 +2,7 @@ package com.msg.translator.model;
 
 public enum EntryType {
 
-  PATHS, EXTERNAL_OBJECTS, OBJECT_ATTRIBUTES, METHODS, LOCAL_OBJECTS, LOCAL_VARIABLES, GLOBAL_VARIABLES, CONSTANTS;
+  PATHS, EXTERNAL_OBJECTS, OBJECT_ATTRIBUTES, METHODS, LOCAL_OBJECTS, LOCAL_VARIABLES;
 
   public static EntryType getEntryType(int index) {
     switch (index) {
@@ -18,12 +18,36 @@ public enum EntryType {
         return LOCAL_OBJECTS;
       case 5:
         return LOCAL_VARIABLES;
-      case 6:
-        return GLOBAL_VARIABLES;
-      case 7:
-        return CONSTANTS;  
       default:
         return null;
     }
+  }
+
+  public static EntryType getEntryType(String line) {   
+    if (line.startsWith("extern path")) {    
+      return PATHS;
+    }
+
+    if (line.startsWith("extern object")) {
+      return EXTERNAL_OBJECTS;
+    }
+    
+    if (line.startsWith("data") && !line.startsWith("data int vtm_")) {
+      return OBJECT_ATTRIBUTES;
+    }
+
+    if (line.startsWith("data int vtm_")) {
+      return METHODS;
+    }
+    
+    if (line.startsWith("object")) {
+      return LOCAL_OBJECTS;
+    }
+
+    if (line.startsWith("float") || line.startsWith("int") || line.startsWith("date") || line.startsWith("bool") ) {
+      return LOCAL_VARIABLES;
+    }
+    
+    return null;
   }
 }

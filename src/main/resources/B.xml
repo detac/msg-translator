@@ -2,7 +2,16 @@
 <nonTranslatedTerms>
     <objectId>B</objectId>
     <domainId>B</domainId>
-    <nonTranslatedTerms>B</nonTranslatedTerms>
-    <nonTranslatedTerms>BB</nonTranslatedTerms>
-    <nonTranslatedTerms>BBB</nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>B</original>
+        <type>PATHS</type>
+    </nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>BB</original>
+        <type>EXTERNAL_OBJECTS</type>
+    </nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>BBB</original>
+        <type>LOCAL_VARIABLES</type>
+    </nonTranslatedTerms>
 </nonTranslatedTerms>

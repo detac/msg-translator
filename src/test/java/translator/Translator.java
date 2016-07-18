@@ -24,7 +24,7 @@ public class Translator {
   public void loadGlossary() {
     GlossaryDao glossaryDao = new GlossaryDao();
     List<GlossaryEntry> result = glossaryDao.loadGlossary();
-    assertEquals(47, result.size());
+    assertEquals(37, result.size());
   }
 
   @Test
@@ -32,20 +32,20 @@ public class Translator {
     NonTranslatedTerms nonTranslatedTermsA = new NonTranslatedTerms();
     nonTranslatedTermsA.setObjectId("A");
     nonTranslatedTermsA.setDomainId("A");
-    List<String> listA = new ArrayList<>();
-    listA.add("A");
-    listA.add("AA");
-    listA.add("AAA");
-    nonTranslatedTermsA.setNonTranslatedTerms(listA);
+    List<GlossaryEntry> notTranslatedA = new ArrayList<>();
+    notTranslatedA.add(new GlossaryEntry(EntryType.METHODS,"A"));
+    notTranslatedA.add(new GlossaryEntry(EntryType.LOCAL_OBJECTS,"AA"));
+    notTranslatedA.add(new GlossaryEntry(EntryType.OBJECT_ATTRIBUTES,"AAA"));
+    nonTranslatedTermsA.setNonTranslatedTerms(notTranslatedA);
 
     NonTranslatedTerms nonTranslatedTermsB = new NonTranslatedTerms();
     nonTranslatedTermsB.setObjectId("B");
     nonTranslatedTermsB.setDomainId("B");
-    List<String> listB = new ArrayList<>();
-    listB.add("B");
-    listB.add("BB");
-    listB.add("BBB");
-    nonTranslatedTermsB.setNonTranslatedTerms(listB);
+    List<GlossaryEntry> notTranslatedB = new ArrayList<>();
+    notTranslatedB.add(new GlossaryEntry(EntryType.PATHS,"B"));
+    notTranslatedB.add(new GlossaryEntry(EntryType.EXTERNAL_OBJECTS,"BB"));
+    notTranslatedB.add(new GlossaryEntry(EntryType.LOCAL_VARIABLES,"BBB"));
+    nonTranslatedTermsB.setNonTranslatedTerms(notTranslatedB);
 
     NonTranslatedTermsService nonTranslatedTermsService = new NonTranslatedTermsService();
     List<NonTranslatedTerms> list = new ArrayList<>();
@@ -118,12 +118,6 @@ public class Translator {
     
     actual = glossaryService.translate(EntryType.LOCAL_VARIABLES, "li_BeitragManuellKnz");
     assertEquals("li_FlagManualRating", actual);
-    
-    actual = glossaryService.translate(EntryType.GLOBAL_VARIABLES, "bCheckZuNaGueltig");
-    assertEquals("bCheckDiSuValid", actual);
-    
-    actual = glossaryService.translate(EntryType.CONSTANTS, "LP_ZUNATYP_PRAEMAENDZURFAELLIGK");
-    assertEquals("LP_DISUTYPE_PREMIUMCHANGEATDUEDATE", actual);
   }
 
 }

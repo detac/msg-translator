@@ -2,7 +2,16 @@
 <nonTranslatedTerms>
     <objectId>A</objectId>
     <domainId>A</domainId>
-    <nonTranslatedTerms>A</nonTranslatedTerms>
-    <nonTranslatedTerms>AA</nonTranslatedTerms>
-    <nonTranslatedTerms>AAA</nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>A</original>
+        <type>METHODS</type>
+    </nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>AA</original>
+        <type>LOCAL_OBJECTS</type>
+    </nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>AAA</original>
+        <type>OBJECT_ATTRIBUTES</type>
+    </nonTranslatedTerms>
 </nonTranslatedTerms>

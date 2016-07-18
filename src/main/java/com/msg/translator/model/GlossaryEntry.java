@@ -11,6 +11,11 @@ public class GlossaryEntry {
   public GlossaryEntry() {
   }
 
+  public GlossaryEntry(EntryType type, String orginal) {
+    this.type = type;
+    this.orginal = orginal;
+  }
+
   public EntryType getType() {
     return type;
   }
@@ -33,6 +38,11 @@ public class GlossaryEntry {
 
   public void setTranslated(String translated) {
     this.translated = translated;
+  }
+
+  @Override
+  public String toString() {
+    return "Translation for term " + orginal + " not found.";
   }
 
 }

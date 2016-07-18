@@ -14,7 +14,7 @@ public class NonTranslatedTerms {
 
   private String domainId;
 
-  private List<String> nonTranslatedTerms = new ArrayList<>();
+  private List<GlossaryEntry> nonTranslatedTerms = new ArrayList<>();
 
   public NonTranslatedTerms() {
   }
@@ -35,11 +35,11 @@ public class NonTranslatedTerms {
     this.domainId = domainId;
   }
 
-  public List<String> getNonTranslatedTerms() {
+  public List<GlossaryEntry> getNonTranslatedTerms() {
     return nonTranslatedTerms;
   }
 
-  public void setNonTranslatedTerms(List<String> nonTranslatedTerms) {
+  public void setNonTranslatedTerms(List<GlossaryEntry> nonTranslatedTerms) {
     this.nonTranslatedTerms = nonTranslatedTerms;
   }
 }

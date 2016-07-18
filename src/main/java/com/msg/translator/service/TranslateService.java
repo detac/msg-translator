@@ -1,20 +1,51 @@
 package com.msg.translator.service;
 
+import com.msg.translator.model.EntryType;
+import com.msg.translator.model.GlossaryEntry;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 public class TranslateService {
 
-  private GlossaryService glossary;
+  private GlossaryService glossaryService;
+
+  List<GlossaryEntry> notTranslated;
 
   public TranslateService() {
-    this.glossary = new GlossaryService();
-    this.glossary.init();
+    this.glossaryService = new GlossaryService();
+    this.glossaryService.init();
   }
 
   public String translate(String formula) {
-    StringBuilder translated = new StringBuilder();
-    // Ovde bi mozda trebalo da primenis neki interpret pattern, ali ti za to nemas vremena;
-    // moj savet ti je da imas state u kome se nalazis, a u njega ulazis, tako sto naidjes na //naziv tipa u formulu;
-    // zatim za taj state, primenjujes dati tip, pa prevodis formulu za taj tip pozivom sledeceg methoda.
-    // glossary.translate(dati_tip, data_formula); i sve to guras u builder translated;
-    return translated.toString();
+    notTranslated = new ArrayList<>();
+    String translatedFormula = new String(formula);
+
+    Scanner scanner = new Scanner(formula);
+    while (scanner.hasNextLine()) {
+      String line = scanner.nextLine().trim(); 
+      EntryType entryType = EntryType.getEntryType(line);
+      if (entryType != null) {
+        String[] splitLine = line.split("\\s+");
+        String orginal = splitLine[splitLine.length - 1];
+        String translated = glossaryService.translate(entryType, orginal);
+        if (translated == null) {
+          GlossaryEntry glossaryEntry = new GlossaryEntry(entryType, orginal);
+          notTranslated.add(glossaryEntry);
+          System.out.println(glossaryEntry);
+        } else {
+          translatedFormula = translatedFormula.replaceAll(orginal, translated);
+        }
+      }
+
+    }
+    scanner.close();
+    
+    return translatedFormula;
+  }
+
+  public List<GlossaryEntry> getNotTranslated() {
+    return notTranslated;
   }
 }
