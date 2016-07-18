@@ -23,12 +23,15 @@ public class TranslateService {
     String translatedFormula = new String(formula);
 
     Scanner scanner = new Scanner(formula);
+    
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine().trim(); 
       EntryType entryType = EntryType.getEntryType(line);
       if (entryType != null) {
+        
         String[] splitLine = line.split("\\s+");
         String orginal = splitLine[splitLine.length - 1];
+        
         String translated = glossaryService.translate(entryType, orginal);
         if (translated == null) {
           GlossaryEntry glossaryEntry = new GlossaryEntry(entryType, orginal);
@@ -37,11 +40,12 @@ public class TranslateService {
         } else {
           translatedFormula = translatedFormula.replaceAll(orginal, translated);
         }
+        
       }
 
     }
-    scanner.close();
     
+    scanner.close();
     return translatedFormula;
   }
 

@@ -29,10 +29,9 @@ public class PmkService {
     for (PmkFormula formula : formulaList) {
       String translated = translateService.translate(formula.getFormulaTextWork());
       formula.setFormulaTextWork(translated);
-
-      //System.out.println("ObjectID " + formula.getObjectId() + " : \n" + translated + "\n");
-
       pmkDao.store(formula, true);
+      
+      //System.out.println("ObjectID " + formula.getObjectId() + " : \n" + translated + "\n");
 
       List<GlossaryEntry> notTranslated = translateService.getNotTranslated();
       if (!notTranslated.isEmpty()) {

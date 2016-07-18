@@ -22,20 +22,20 @@ public class GlossaryService {
     map = new HashMap<>();
     List<GlossaryEntry> list = glossaryDao.loadGlossary();
 
-    for (EntryType et : EntryType.values()) {
+    for (EntryType entryType : EntryType.values()) {
       HashMap<String, String> geMap = new HashMap<>();
       
       List<GlossaryEntry> removeFromList = new ArrayList<>();
-      for (GlossaryEntry ge : list) {
-        if (ge.getType() == et) {
-          geMap.put(ge.getOriginal(), ge.getTranslated());
-          removeFromList.add(ge);
+      for (GlossaryEntry glossaryEntry : list) {
+        if (glossaryEntry.getType() == entryType) {
+          geMap.put(glossaryEntry.getOriginal(), glossaryEntry.getTranslated());
+          removeFromList.add(glossaryEntry);
         }
       }
       
       list.removeAll(removeFromList);
       
-      map.put(et, geMap);
+      map.put(entryType, geMap);
     }
   }
 
