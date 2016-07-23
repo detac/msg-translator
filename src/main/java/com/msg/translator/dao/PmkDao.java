@@ -11,58 +11,58 @@ import com.msg.translator.model.PmkFormula;
 
 public class PmkDao {
 
-  private static final String LIST_ALL_SQL = "SELECT OBJECTID, DOMAINID, FORMULATEXTWORK FROM PMKFORMULA";
+	private static final String LIST_ALL_SQL = "SELECT OBJECTID, DOMAINID, FORMULATEXTWORK FROM PMKFORMULA";
 
-  private static final String STORE_SQL = "UPDATE PMKFORMULA SET FORMULATEXTWORK = ? WHERE OBJECTID = ? AND DOMAINID = ?";
+	private static final String STORE_SQL = "UPDATE PMKFORMULA SET FORMULATEXTWORK = ? WHERE OBJECTID = ? AND DOMAINID = ?";
 
-  private DatabaseConnection databaseConnection;
+	private DatabaseConnection databaseConnection;
 
-  public PmkDao(DatabaseConnection databaseConnection) {
-    this.databaseConnection = databaseConnection;
-  }
+	public PmkDao(DatabaseConnection databaseConnection) {
+		this.databaseConnection = databaseConnection;
+	}
 
-  @SuppressWarnings("unused")
-  private PmkDao() {
-  }
+	@SuppressWarnings("unused")
+	private PmkDao() {
+	}
 
-  public List<PmkFormula> getAll() {
-    List<PmkFormula> result = new ArrayList<>();
+	public List<PmkFormula> getAll() {
+		List<PmkFormula> result = new ArrayList<>();
 
-    try (Statement statement = databaseConnection.getConnection().createStatement()) {
+		try (Statement statement = databaseConnection.getConnection().createStatement()) {
 
-      ResultSet rs = statement.executeQuery(LIST_ALL_SQL);
-      while (rs.next()) {
-        PmkFormula pmkFormula = new PmkFormula();
-        pmkFormula.setObjectId(rs.getString(1));
-        pmkFormula.setDomainId(rs.getString(2));
-        pmkFormula.setFormulaTextWork(rs.getString(3));
-        result.add(pmkFormula);
-      }
+			ResultSet rs = statement.executeQuery(LIST_ALL_SQL);
+			while (rs.next()) {
+				PmkFormula pmkFormula = new PmkFormula();
+				pmkFormula.setObjectId(rs.getString(1));
+				pmkFormula.setDomainId(rs.getString(2));
+				pmkFormula.setFormulaTextWork(rs.getString(3));
+				result.add(pmkFormula);
+			}
 
-    } catch (SQLException e) {
-      System.out.println("PmkDao.getAll(): " + e);
-    }
+		} catch (SQLException e) {
+			System.out.println("PmkDao.getAll(): " + e);
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  public int store(PmkFormula formula, boolean commit) {
-    int result = -1;
-    try {
-      PreparedStatement ps = databaseConnection.getConnection().prepareStatement(STORE_SQL);
-      ps.setString(1, formula.getFormulaTextWork());
-      ps.setString(2, formula.getObjectId());
-      ps.setString(3, formula.getDomainId());
-      result = ps.executeUpdate();
+	public int store(PmkFormula formula, boolean commit) {
+		int result = -1;
+		try {
+			PreparedStatement ps = databaseConnection.getConnection().prepareStatement(STORE_SQL);
+			ps.setString(1, formula.getFormulaTextWork());
+			ps.setString(2, formula.getObjectId());
+			ps.setString(3, formula.getDomainId());
+			result = ps.executeUpdate();
 
-      if (commit) {
-        databaseConnection.getConnection().commit();
-      }
+			if (commit) {
+				databaseConnection.getConnection().commit();
+			}
 
-      return result;
-    } catch (SQLException e) {
-      System.out.println("PmkDao.store(): " + e);
-    }
-    return result;
-  }
+			return result;
+		} catch (SQLException e) {
+			System.out.println("PmkDao.store(): " + e);
+		}
+		return result;
+	}
 }

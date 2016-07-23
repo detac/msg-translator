@@ -1,45 +1,31 @@
 package com.msg.translator.service;
 
-import com.msg.translator.dao.GlossaryDao;
-import com.msg.translator.model.EntryType;
-import com.msg.translator.model.GlossaryEntry;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.msg.translator.dao.GlossaryDao;
+import com.msg.translator.model.GlossaryEntry;
+
 public class GlossaryService {
 
-  private GlossaryDao glossaryDao;
+	private GlossaryDao glossaryDao;
 
-  private HashMap<EntryType, HashMap<String, String>> map;
+	private HashMap<String, String> map;
 
-  public GlossaryService() {
-    glossaryDao = new GlossaryDao();
-  }
+	public GlossaryService(GlossaryDao glossaryDao) {
+		this.glossaryDao = glossaryDao;
+	}
 
-  public void init() {
-    map = new HashMap<>();
-    List<GlossaryEntry> list = glossaryDao.loadGlossary();
+	public void init() {
+		List<GlossaryEntry> glossaryEntries = glossaryDao.loadGlossary();
 
-    for (EntryType entryType : EntryType.values()) {
-      HashMap<String, String> geMap = new HashMap<>();
-      
-      List<GlossaryEntry> removeFromList = new ArrayList<>();
-      for (GlossaryEntry glossaryEntry : list) {
-        if (glossaryEntry.getType() == entryType) {
-          geMap.put(glossaryEntry.getOriginal(), glossaryEntry.getTranslated());
-          removeFromList.add(glossaryEntry);
-        }
-      }
-      
-      list.removeAll(removeFromList);
-      
-      map.put(entryType, geMap);
-    }
-  }
+		map = new HashMap<>();
+		for (GlossaryEntry glossaryEntry : glossaryEntries) {
+			map.put(glossaryEntry.getOriginal(), glossaryEntry.getTranslated());
+		}
+	}
 
-  public String translate(EntryType type, String orginal) {
-    return map.get(type).get(orginal);
-  }
+	public String translate(String orginal) {
+		return map.get(orginal);
+	}
 }

@@ -1,0 +1,279 @@
+"#import &quot;incStdMethods_SHU.h&quot;
+
+//Externe Pfade
+extern path	pathDiSu
+extern path pathPrem
+
+//Externe Objekte
+extern object extRoot
+extern object extSProd
+extern object extProd
+extern object extElpBundle
+extern object extElp
+extern object extInsObj
+extern object extZuNa
+extern object extLat
+extern object extElpPrem
+extern object extMAObj
+extern object extPrem
+
+//Versicherungstechnische Methoden
+data int vtm_CalculateDiSu
+
+//Attribute Merkmale
+data int	SortingSequence
+data int DiSuType
+
+data float Tariffpremium
+data float Tariffpremium2_jaehrlich
+data float AbsWert
+data float YearlyNonMedicalSurcharge
+
+data date  ChangeDate
+data date  Begin
+data date  End
+
+//Objekte
+object objDiSu
+object objPrem
+
+//interne Variablen
+float lf_AbsAmount
+int   li_DiSuType
+date  ld_ChangeDate
+bool  lb_ZuNaAktiv
+bool  lb_DiSuValid
+
+date ld_Begin_Beitrag 
+date ld_End_Beitrag    
+float lf_Tariffpremium   
+
+/*********************************************************************/
+/* Verarbeitung                                                      */
+/*********************************************************************/
+
+// Beitragsobjekt holen
+loop ( this, pathPrem )
+{
+	objPrem = pathPrem
+	break
+}
+
+ld_ChangeDate = extProd.ChangeDate
+
+/* ZuNa�s am Elp berechnen */
+loop (this, pathDiSu.SortingSequence)
+{
+	// Nicht f�r ZuNa PraemAend Zur Faelligk, dies wird am End gemacht.
+	if(pathDiSu.DiSuType != LP_ZUNATYP_PRAEMAENDZURFAELLIGK )
+	{
+		objDiSu = pathDiSu
+	
+		li_DiSuType = objDiSu.DiSuType
+	
+		/* �berpr�fen, ob der ZuNa aktiv ist */
+		lb_ZuNaAktiv = bCheckLateralObjektAktiv
+								[ extProd = extProd,
+								  extLat = objDiSu ]
+
+		/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */							  
+		lb_DiSuValid = bCheckZuNaGueltig
+							[ extZuNa = objDiSu,
+							  extElpPrem = objPrem]
+	
+		if (lb_ZuNaAktiv &amp;&amp; lb_DiSuValid)
+		{
+   		    /* Absolut-Betrag des ZuNa�s berechnen */
+			rc = objDiSu.vtm_CalculateDiSu
+			        [ extRoot   	= extRoot,
+                      extSProd 	= extSProd,
+                      extProd		= extProd,
+                      extElpBundle	= extElpBundle,
+                      extElp  		= this,
+                      extInsObj  		= extInsObj,
+                      fTarifpraemie = objPrem.Tariffpremium2_jaehrlich ]
+
+	
+			/* Absolut-Wert merken */
+			lf_AbsAmount = objDiSu.AbsWert
+	
+			/* Beitrag um ZuNa Betrag ver�ndern */
+			rc = objPrem.vtm_CalculateDiSu
+					 [ extRoot   	= extRoot,
+                       extSProd 	= extSProd,
+                       extProd		= extProd,
+                       extElpBundle	= extElpBundle,
+                       extElp  		= this,
+                       extInsObj  	= extInsObj,
+                       extZuNa      = objDiSu,
+                       fAbsolutwert	= lf_AbsAmount ]
+         }
+   }
+}
+
+/* ZuNa�s am ElpB�ndel berechnen */
+if (exists(extElpBundle))	
+{
+	loop (extElpBundle, pathDiSu.SortingSequence)
+	{
+		objDiSu = pathDiSu
+	
+		li_DiSuType = objDiSu.DiSuType
+	
+		/* �berpr�fen, ob der ZuNa aktiv ist */
+		lb_ZuNaAktiv = bCheckLateralObjektAktiv
+								[ extProd = extProd,
+								  extLat = objDiSu ]	
+
+		/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */		
+		lb_DiSuValid = bCheckZuNaGueltig
+							[ extZuNa = objDiSu,
+							  extElpPrem = objPrem]
+	
+
+		if (lb_ZuNaAktiv &amp;&amp; lb_DiSuValid)
+		{
+			// Speichern des alten ZuNa-Wertes (notwendig, da ElpB�ndel/Produkt-ZuNas auf Elp-Ebene berechnet werden)
+	   	lf_AbsAmount = objDiSu.AbsWert
+
+			/* Absolut-Betrag des ZuNa�s berechnen */
+			rc = objDiSu.vtm_CalculateDiSu
+					 [ extRoot   	= extRoot,
+                       extSProd 	= extSProd,
+                       extProd		= extProd,
+                       extElpBundle	= extElpBundle,
+                       extElp  		= this,
+                       extInsObj  	= extInsObj,
+                       fTarifpraemie = objPrem.Tariffpremium2_jaehrlich ]
+	
+			/* Wert des ZuNa�s bezogen auf das aktuelle Elp ermitteln = Differenz zum vorher gemerkten Absolut-Wert */
+			lf_AbsAmount = objDiSu.AbsWert - lf_AbsAmount
+	
+			/* Beitrag um ZuNa Betrag ver�ndern */
+			rc = objPrem.vtm_CalculateDiSu
+					 [ extRoot   	= extRoot,
+                       extSProd 	= extSProd,
+                       extProd		= extProd,
+                       extElpBundle	= extElpBundle,
+                       extElp  		= this,
+                       extInsObj  	= extInsObj,
+                       extZuNa      = objDiSu,
+                       fAbsolutwert	= lf_AbsAmount ]
+ 	  }
+	}
+}
+
+/* ZuNa�s am Produkt berechnen */
+loop (extProd, pathDiSu.SortingSequence)
+{
+	objDiSu = pathDiSu
+	
+	li_DiSuType = objDiSu.DiSuType
+	
+	/* �berpr�fen, ob der ZuNa aktiv ist */
+	lb_ZuNaAktiv = bCheckLateralObjektAktiv
+							[ extProd = extProd,
+							  extLat = objDiSu ]	
+							 
+	/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */							  
+	lb_DiSuValid = bCheckZuNaGueltig
+							[ extZuNa = objDiSu,
+							  extElpPrem = objPrem]
+	
+
+	if (lb_ZuNaAktiv &amp;&amp; lb_DiSuValid)
+	{	
+		// Speichern des alten ZuNa-Wertes (notwendig, da ElpB�ndel/Produkt-ZuNas auf Elp-Ebene berechnet werden)
+   		lf_AbsAmount = objDiSu.AbsWert
+
+   	    // Pr�mie geht nur dann in die Berechnung des ZuNa ein, wenn das Beitragsobjekt zum
+   	    // Wirksamkeitsdatum der Berechnung g�ltig ist	
+   		
+   	    ld_Begin_Beitrag  = objPrem.Begin
+        ld_End_Beitrag    = objPrem.End
+        lf_Tariffpremium    = 0.0
+
+        if ( (ld_Begin_Beitrag &lt;= ld_ChangeDate) &amp;&amp; (ld_ChangeDate &lt;= ld_End_Beitrag))
+        {
+   	    	lf_Tariffpremium = objPrem.Tariffpremium2_jaehrlich
+   	    }
+   	    
+   		/* Absolut-Betrag des ZuNa�s berechnen */
+		rc = objDiSu.vtm_CalculateDiSu
+					 [ extRoot   	 = extRoot,
+                       extSProd 	 = extSProd,
+                       extProd		 = extProd,
+                       extElpBundle	 = extElpBundle,
+                       extElp  		 = this,
+                       extInsObj		 = extInsObj,
+                       fTarifpraemie = lf_Tariffpremium]
+	
+		/* Wert des ZuNa�s bezogen auf das aktuelle Elp ermitteln = Differenz zum vorher gemerkten Absolut-Wert */
+		lf_AbsAmount = objDiSu.AbsWert - lf_AbsAmount
+	
+		/* Beitrag um ZuNa Betrag ver�ndern */
+		rc = objPrem.vtm_CalculateDiSu
+					 [ extRoot   	= extRoot,
+                       extSProd 	= extSProd,
+                       extProd		= extProd,
+                       extElpBundle	= extElpBundle,
+                       extElp  		= this,
+                       extInsObj		= extInsObj,
+                       extZuNa      = objDiSu,
+                       fAbsolutwert	= lf_AbsAmount ]
+   }      							
+}
+
+
+
+/*Erzeuge ZuNa PraemienAenderungZurFaelligkeit am Elp falls n�tig und ermittle Wert */
+/*Dies darf erst nach Ber�cksichtigung aller ZuNas auf allen Ebenen geschehen. 
+Der Zuschlag/Nachlass ist nur auf Elp-Ebene  g�ltig */
+rc =  iErzeugeZuNaPraemAenderungZurFaelligk
+             [ extRoot   = extRoot,
+               extSProd = extSProd,
+               extProd 	 = extProd,
+               extMAObj  = this,
+               extInsObj   = extInsObj,
+               extPrem    = objPrem ]
+
+/* Gegebenenfalls ZuNa PraemAenderungZurFaelligkeit ermitteln */
+loop (this, pathDiSu.SortingSequence)
+{
+	if(pathDiSu.DiSuType == LP_ZUNATYP_PRAEMAENDZURFAELLIGK )
+	{
+
+		objDiSu = pathDiSu
+	
+		li_DiSuType = objDiSu.DiSuType
+	
+		/* �berpr�fen, ob der ZuNa aktiv ist */
+		lb_ZuNaAktiv = bCheckLateralObjektAktiv
+							[ extProd = extProd,
+							  extLat = objDiSu ]
+
+		/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */							  
+		lb_DiSuValid = bCheckZuNaGueltig
+							[ extZuNa = objDiSu,
+							  extElpPrem = objPrem]
+	
+		if (lb_ZuNaAktiv &amp;&amp; lb_DiSuValid)
+		{
+   		    /* Absolut-Betrag des ZuNa�s berechnen */
+			rc = objDiSu.vtm_CalculateDiSu
+			        [ extRoot   	= extRoot,
+                      extSProd 	= extSProd,
+                      extProd		= extProd,
+                      extElpBundle	= extElpBundle,
+                      extElp  		= this,
+                      extInsObj  		= extInsObj,
+                      fTarifpraemie = objPrem.Tariffpremium2_jaehrlich ]
+
+	
+			/* Absolut-Wert merken */
+			lf_AbsAmount = objDiSu.AbsWert
+	
+			/* Beitrag um ZuNa Betrag ver�ndern */
+			rc = objPrem.vtm_CalculateDiSu
+					 [ extRoot   	= extRoot,
+                       ex"

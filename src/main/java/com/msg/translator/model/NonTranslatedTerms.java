@@ -10,36 +10,36 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "objectId", "domainId", "nonTranslatedTerms" })
 public class NonTranslatedTerms {
 
-  private String objectId;
+	private String objectId;
 
-  private String domainId;
+	private String domainId;
 
-  private List<GlossaryEntry> nonTranslatedTerms = new ArrayList<>();
+	private List<GlossaryEntry> nonTranslatedTerms = new ArrayList<>();
 
-  public NonTranslatedTerms() {
-  }
+	public NonTranslatedTerms() {
+	}
 
-  public String getObjectId() {
-    return objectId;
-  }
+	public String getObjectId() {
+		return objectId;
+	}
 
-  public void setObjectId(String objectId) {
-    this.objectId = objectId;
-  }
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
 
-  public String getDomainId() {
-    return domainId;
-  }
+	public String getDomainId() {
+		return domainId;
+	}
 
-  public void setDomainId(String domainId) {
-    this.domainId = domainId;
-  }
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
+	}
 
-  public List<GlossaryEntry> getNonTranslatedTerms() {
-    return nonTranslatedTerms;
-  }
+	public List<GlossaryEntry> getNonTranslatedTerms() {
+		return nonTranslatedTerms;
+	}
 
-  public void setNonTranslatedTerms(List<GlossaryEntry> nonTranslatedTerms) {
-    this.nonTranslatedTerms = nonTranslatedTerms;
-  }
+	public void setNonTranslatedTerms(List<GlossaryEntry> nonTranslatedTerms) {
+		this.nonTranslatedTerms = nonTranslatedTerms;
+	}
 }

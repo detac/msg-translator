@@ -1,0 +1,279 @@
+"#import &quot;incStdMethods_SHU.h&quot;
+
+//Externe Pfade
+extern path	pathZuNa
+extern path pathBtr
+
+//Externe Objekte
+extern object extRoot
+extern object extVkprod
+extern object extProd
+extern object extElpBuend
+extern object extElp
+extern object extVObj
+extern object extZuNa
+extern object extLat
+extern object extElpBtr
+extern object extHAObj
+extern object extBtr
+
+//Versicherungstechnische Methoden
+data int vtm_BerechneZuNa
+
+//Attribute Merkmale
+data int	Sortierfolge
+data int ZuNaTyp
+
+data float Tarifbeitrag
+data float Tarifbeitrag2_jaehrlich
+data float AbsWert
+data float NichtMedZuschlag_jaehrlich
+
+data date  Aenderungsdatum
+data date  Beginn
+data date  Ende
+
+//Objekte
+object objZuNa
+object objBtr
+
+//interne Variablen
+float lf_AbsWert
+int   li_ZuNaTyp
+date  ld_Aenderungsdatum
+bool  lb_ZuNaAktiv
+bool  lb_ZuNaGueltig
+
+date ld_Beginn_Beitrag 
+date ld_Ende_Beitrag    
+float lf_Tarifbeitrag   
+
+/*********************************************************************/
+/* Verarbeitung                                                      */
+/*********************************************************************/
+
+// Beitragsobjekt holen
+loop ( this, pathBtr )
+{
+	objBtr = pathBtr
+	break
+}
+
+ld_Aenderungsdatum = extProd.Aenderungsdatum
+
+/* ZuNa�s am Elp berechnen */
+loop (this, pathZuNa.Sortierfolge)
+{
+	// Nicht f�r ZuNa PraemAend Zur Faelligk, dies wird am Ende gemacht.
+	if(pathZuNa.ZuNaTyp != LP_ZUNATYP_PRAEMAENDZURFAELLIGK )
+	{
+		objZuNa = pathZuNa
+	
+		li_ZuNaTyp = objZuNa.ZuNaTyp
+	
+		/* �berpr�fen, ob der ZuNa aktiv ist */
+		lb_ZuNaAktiv = bCheckLateralObjektAktiv
+								[ extProd = extProd,
+								  extLat = objZuNa ]
+
+		/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */							  
+		lb_ZuNaGueltig = bCheckZuNaGueltig
+							[ extZuNa = objZuNa,
+							  extElpBtr = objBtr]
+	
+		if (lb_ZuNaAktiv &amp;&amp; lb_ZuNaGueltig)
+		{
+   		    /* Absolut-Betrag des ZuNa�s berechnen */
+			rc = objZuNa.vtm_BerechneZuNa
+			        [ extRoot   	= extRoot,
+                      extVkprod 	= extVkprod,
+                      extProd		= extProd,
+                      extElpBuend	= extElpBuend,
+                      extElp  		= this,
+                      extVObj  		= extVObj,
+                      fTarifpraemie = objBtr.Tarifbeitrag2_jaehrlich ]
+
+	
+			/* Absolut-Wert merken */
+			lf_AbsWert = objZuNa.AbsWert
+	
+			/* Beitrag um ZuNa Betrag ver�ndern */
+			rc = objBtr.vtm_BerechneZuNa
+					 [ extRoot   	= extRoot,
+                       extVkprod 	= extVkprod,
+                       extProd		= extProd,
+                       extElpBuend	= extElpBuend,
+                       extElp  		= this,
+                       extVObj  	= extVObj,
+                       extZuNa      = objZuNa,
+                       fAbsolutwert	= lf_AbsWert ]
+         }
+   }
+}
+
+/* ZuNa�s am ElpB�ndel berechnen */
+if (exists(extElpBuend))	
+{
+	loop (extElpBuend, pathZuNa.Sortierfolge)
+	{
+		objZuNa = pathZuNa
+	
+		li_ZuNaTyp = objZuNa.ZuNaTyp
+	
+		/* �berpr�fen, ob der ZuNa aktiv ist */
+		lb_ZuNaAktiv = bCheckLateralObjektAktiv
+								[ extProd = extProd,
+								  extLat = objZuNa ]	
+
+		/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */		
+		lb_ZuNaGueltig = bCheckZuNaGueltig
+							[ extZuNa = objZuNa,
+							  extElpBtr = objBtr]
+	
+
+		if (lb_ZuNaAktiv &amp;&amp; lb_ZuNaGueltig)
+		{
+			// Speichern des alten ZuNa-Wertes (notwendig, da ElpB�ndel/Produkt-ZuNas auf Elp-Ebene berechnet werden)
+	   	lf_AbsWert = objZuNa.AbsWert
+
+			/* Absolut-Betrag des ZuNa�s berechnen */
+			rc = objZuNa.vtm_BerechneZuNa
+					 [ extRoot   	= extRoot,
+                       extVkprod 	= extVkprod,
+                       extProd		= extProd,
+                       extElpBuend	= extElpBuend,
+                       extElp  		= this,
+                       extVObj  	= extVObj,
+                       fTarifpraemie = objBtr.Tarifbeitrag2_jaehrlich ]
+	
+			/* Wert des ZuNa�s bezogen auf das aktuelle Elp ermitteln = Differenz zum vorher gemerkten Absolut-Wert */
+			lf_AbsWert = objZuNa.AbsWert - lf_AbsWert
+	
+			/* Beitrag um ZuNa Betrag ver�ndern */
+			rc = objBtr.vtm_BerechneZuNa
+					 [ extRoot   	= extRoot,
+                       extVkprod 	= extVkprod,
+                       extProd		= extProd,
+                       extElpBuend	= extElpBuend,
+                       extElp  		= this,
+                       extVObj  	= extVObj,
+                       extZuNa      = objZuNa,
+                       fAbsolutwert	= lf_AbsWert ]
+ 	  }
+	}
+}
+
+/* ZuNa�s am Produkt berechnen */
+loop (extProd, pathZuNa.Sortierfolge)
+{
+	objZuNa = pathZuNa
+	
+	li_ZuNaTyp = objZuNa.ZuNaTyp
+	
+	/* �berpr�fen, ob der ZuNa aktiv ist */
+	lb_ZuNaAktiv = bCheckLateralObjektAktiv
+							[ extProd = extProd,
+							  extLat = objZuNa ]	
+							 
+	/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */							  
+	lb_ZuNaGueltig = bCheckZuNaGueltig
+							[ extZuNa = objZuNa,
+							  extElpBtr = objBtr]
+	
+
+	if (lb_ZuNaAktiv &amp;&amp; lb_ZuNaGueltig)
+	{	
+		// Speichern des alten ZuNa-Wertes (notwendig, da ElpB�ndel/Produkt-ZuNas auf Elp-Ebene berechnet werden)
+   		lf_AbsWert = objZuNa.AbsWert
+
+   	    // Pr�mie geht nur dann in die Berechnung des ZuNa ein, wenn das Beitragsobjekt zum
+   	    // Wirksamkeitsdatum der Berechnung g�ltig ist	
+   		
+   	    ld_Beginn_Beitrag  = objBtr.Beginn
+        ld_Ende_Beitrag    = objBtr.Ende
+        lf_Tarifbeitrag    = 0.0
+
+        if ( (ld_Beginn_Beitrag &lt;= ld_Aenderungsdatum) &amp;&amp; (ld_Aenderungsdatum &lt;= ld_Ende_Beitrag))
+        {
+   	    	lf_Tarifbeitrag = objBtr.Tarifbeitrag2_jaehrlich
+   	    }
+   	    
+   		/* Absolut-Betrag des ZuNa�s berechnen */
+		rc = objZuNa.vtm_BerechneZuNa
+					 [ extRoot   	 = extRoot,
+                       extVkprod 	 = extVkprod,
+                       extProd		 = extProd,
+                       extElpBuend	 = extElpBuend,
+                       extElp  		 = this,
+                       extVObj		 = extVObj,
+                       fTarifpraemie = lf_Tarifbeitrag]
+	
+		/* Wert des ZuNa�s bezogen auf das aktuelle Elp ermitteln = Differenz zum vorher gemerkten Absolut-Wert */
+		lf_AbsWert = objZuNa.AbsWert - lf_AbsWert
+	
+		/* Beitrag um ZuNa Betrag ver�ndern */
+		rc = objBtr.vtm_BerechneZuNa
+					 [ extRoot   	= extRoot,
+                       extVkprod 	= extVkprod,
+                       extProd		= extProd,
+                       extElpBuend	= extElpBuend,
+                       extElp  		= this,
+                       extVObj		= extVObj,
+                       extZuNa      = objZuNa,
+                       fAbsolutwert	= lf_AbsWert ]
+   }      							
+}
+
+
+
+/*Erzeuge ZuNa PraemienAenderungZurFaelligkeit am Elp falls n�tig und ermittle Wert */
+/*Dies darf erst nach Ber�cksichtigung aller ZuNas auf allen Ebenen geschehen. 
+Der Zuschlag/Nachlass ist nur auf Elp-Ebene  g�ltig */
+rc =  iErzeugeZuNaPraemAenderungZurFaelligk
+             [ extRoot   = extRoot,
+               extVkprod = extVkprod,
+               extProd 	 = extProd,
+               extHAObj  = this,
+               extVObj   = extVObj,
+               extBtr    = objBtr ]
+
+/* Gegebenenfalls ZuNa PraemAenderungZurFaelligkeit ermitteln */
+loop (this, pathZuNa.Sortierfolge)
+{
+	if(pathZuNa.ZuNaTyp == LP_ZUNATYP_PRAEMAENDZURFAELLIGK )
+	{
+
+		objZuNa = pathZuNa
+	
+		li_ZuNaTyp = objZuNa.ZuNaTyp
+	
+		/* �berpr�fen, ob der ZuNa aktiv ist */
+		lb_ZuNaAktiv = bCheckLateralObjektAktiv
+							[ extProd = extProd,
+							  extLat = objZuNa ]
+
+		/* �berpr�fen, ob der ZuNa g�ltig ist und verwendet werden soll */							  
+		lb_ZuNaGueltig = bCheckZuNaGueltig
+							[ extZuNa = objZuNa,
+							  extElpBtr = objBtr]
+	
+		if (lb_ZuNaAktiv &amp;&amp; lb_ZuNaGueltig)
+		{
+   		    /* Absolut-Betrag des ZuNa�s berechnen */
+			rc = objZuNa.vtm_BerechneZuNa
+			        [ extRoot   	= extRoot,
+                      extVkprod 	= extVkprod,
+                      extProd		= extProd,
+                      extElpBuend	= extElpBuend,
+                      extElp  		= this,
+                      extVObj  		= extVObj,
+                      fTarifpraemie = objBtr.Tarifbeitrag2_jaehrlich ]
+
+	
+			/* Absolut-Wert merken */
+			lf_AbsWert = objZuNa.AbsWert
+	
+			/* Beitrag um ZuNa Betrag ver�ndern */
+			rc = objBtr.vtm_BerechneZuNa
+					 [ extRoot   	= extRoot,
+                       ex"

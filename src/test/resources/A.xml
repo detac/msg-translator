@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nonTranslatedTerms>
+    <objectId>A</objectId>
+    <domainId>A</domainId>
+    <nonTranslatedTerms>
+        <original>A</original>
+        <type>METHODS</type>
+    </nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>AA</original>
+        <type>LOCAL_OBJECTS</type>
+    </nonTranslatedTerms>
+    <nonTranslatedTerms>
+        <original>AAA</original>
+        <type>OBJECT_ATTRIBUTES</type>
+    </nonTranslatedTerms>
+</nonTranslatedTerms>
