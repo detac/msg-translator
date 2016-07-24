@@ -21,7 +21,7 @@ public class PmkService {
 		this.nonTranslatedTermsService = nonTranslatedTermsService;
 	}
 
-	public void translate(boolean store) {
+	public void translate(boolean store, boolean consoleLog) {
 
 		List<PmkFormula> formulaList = pmkDao.getAll();
 		for (PmkFormula formula : formulaList) {
@@ -29,30 +29,34 @@ public class PmkService {
 			formula.setFormulaTextWork(translated);
 			pmkDao.store(formula, store);
 
-			System.out.println("ObjectID " + formula.getObjectId() + " : \n \n" + translated + "\n");
+			if (consoleLog) {
+				System.out.println("ObjectID " + formula.getObjectId() + " : \n \n" + translated + "\n");
+			}
 
 			List<GlossaryEntry> notTranslated = translateService.getNotTranslated();
 			if (!notTranslated.isEmpty()) {
 
-				System.out.println("");
-				System.out.println("**********");
-				System.out.println("");
+				if (consoleLog) {
+					System.out.println("");
+					System.out.println("**********");
+					System.out.println("");
 
-				System.out.println("Not treslated terms: ");
-				for (GlossaryEntry glossaryEntry : notTranslated) {
-					System.out.println(glossaryEntry);
+					System.out.println("Not treslated terms: ");
+					for (GlossaryEntry glossaryEntry : notTranslated) {
+						System.out.println(glossaryEntry);
+					}
+
+					System.out.println("");
+					System.out.println("**********");
+					System.out.println("");
 				}
-
-				System.out.println("");
-				System.out.println("**********");
-				System.out.println("");
-
+				
 				NonTranslatedTerms nonTranslatedTerms = new NonTranslatedTerms();
 				nonTranslatedTerms.setObjectId(formula.getObjectId());
 				nonTranslatedTerms.setDomainId(formula.getDomainId());
-				nonTranslatedTerms.setNonTranslatedTerms(notTranslated);
+				nonTranslatedTerms.setNonTranslated(notTranslated);
 
-				nonTranslatedTermsService.marshalXMlToFile(nonTranslatedTerms, "src//main//resources//");
+				nonTranslatedTermsService.marshalXMlToFile(nonTranslatedTerms);
 			}
 		}
 

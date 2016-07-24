@@ -1,11 +1,23 @@
 package com.msg.translator.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlRootElement(name = "glossaryEntry")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "type", "orginal", "translated" })
 public class GlossaryEntry {
 
+	@XmlElement
 	private EntryType type;
 
+	@XmlElement
 	private String orginal;
 
+	@XmlElement
 	private String translated;
 
 	public GlossaryEntry() {

@@ -21,10 +21,10 @@ public class App {
 			GlossaryService glossaryService = new GlossaryService(glossaryDao);
 			TranslateService translateService = new TranslateService(glossaryService);
 
-			NonTranslatedTermsService nonTranslatedTermsService = new NonTranslatedTermsService();
+			NonTranslatedTermsService nonTranslatedTermsService = new NonTranslatedTermsService("src//main//resources//");
 
 			PmkService pmkService = new PmkService(pmkDao, translateService, nonTranslatedTermsService);
-			pmkService.translate(false);
+			pmkService.translate(false, false);
 
 			databaseConnection.close();
 		}

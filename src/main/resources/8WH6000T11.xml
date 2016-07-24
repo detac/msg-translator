@@ -2,28 +2,30 @@
 <nonTranslatedTerms>
     <objectId>8WH6000T11</objectId>
     <domainId>SL86000T11</domainId>
-    <nonTranslatedTerms>
-        <original>extZuNa</original>
-        <type>EXTERNAL_OBJECTS</type>
-    </nonTranslatedTerms>
-    <nonTranslatedTerms>
-        <original>AbsWert</original>
-        <type>OBJECT_ATTRIBUTES</type>
-    </nonTranslatedTerms>
-    <nonTranslatedTerms>
-        <original>lb_ZuNaAktiv</original>
-        <type>LOCAL_VARIABLES</type>
-    </nonTranslatedTerms>
-    <nonTranslatedTerms>
-        <original>ld_Beginn_Beitrag</original>
-        <type>LOCAL_VARIABLES</type>
-    </nonTranslatedTerms>
-    <nonTranslatedTerms>
-        <original>ld_Ende_Beitrag</original>
-        <type>LOCAL_VARIABLES</type>
-    </nonTranslatedTerms>
-    <nonTranslatedTerms>
-        <original>lf_Tarifbeitrag</original>
-        <type>LOCAL_VARIABLES</type>
-    </nonTranslatedTerms>
+    <nonTranslated>
+        <glossaryEntry>
+            <type>EXTERNAL_OBJECTS</type>
+            <orginal>extZuNa</orginal>
+        </glossaryEntry>
+        <glossaryEntry>
+            <type>OBJECT_ATTRIBUTES</type>
+            <orginal>AbsWert</orginal>
+        </glossaryEntry>
+        <glossaryEntry>
+            <type>LOCAL_VARIABLES</type>
+            <orginal>lb_ZuNaAktiv</orginal>
+        </glossaryEntry>
+        <glossaryEntry>
+            <type>LOCAL_VARIABLES</type>
+            <orginal>ld_Beginn_Beitrag</orginal>
+        </glossaryEntry>
+        <glossaryEntry>
+            <type>LOCAL_VARIABLES</type>
+            <orginal>ld_Ende_Beitrag</orginal>
+        </glossaryEntry>
+        <glossaryEntry>
+            <type>LOCAL_VARIABLES</type>
+            <orginal>lf_Tarifbeitrag</orginal>
+        </glossaryEntry>
+    </nonTranslated>
 </nonTranslatedTerms>

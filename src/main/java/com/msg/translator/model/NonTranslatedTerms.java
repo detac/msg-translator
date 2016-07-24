@@ -1,20 +1,29 @@
 package com.msg.translator.model;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement
-@XmlType(propOrder = { "objectId", "domainId", "nonTranslatedTerms" })
+@XmlRootElement(name="nonTranslatedTerms")
+@XmlAccessorType (XmlAccessType.FIELD)
+@XmlType(propOrder = { "objectId", "domainId", "nonTranslated" })
 public class NonTranslatedTerms {
 
+	@XmlElement
 	private String objectId;
 
+	@XmlElement
 	private String domainId;
 
-	private List<GlossaryEntry> nonTranslatedTerms = new ArrayList<>();
+	@XmlElementWrapper
+	@XmlElement(name = "glossaryEntry")
+	private List<GlossaryEntry> nonTranslated;
 
 	public NonTranslatedTerms() {
 	}
@@ -35,11 +44,11 @@ public class NonTranslatedTerms {
 		this.domainId = domainId;
 	}
 
-	public List<GlossaryEntry> getNonTranslatedTerms() {
-		return nonTranslatedTerms;
+	public List<GlossaryEntry> getNonTranslated() {
+		return nonTranslated;
 	}
 
-	public void setNonTranslatedTerms(List<GlossaryEntry> nonTranslatedTerms) {
-		this.nonTranslatedTerms = nonTranslatedTerms;
+	public void setNonTranslated(List<GlossaryEntry> nonTranslated) {
+		this.nonTranslated = nonTranslated;
 	}
 }
